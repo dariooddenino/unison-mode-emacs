@@ -55,39 +55,32 @@
 
              ;; generate regex strings for each category
              (x-keywords-regexp (regexp-opt x-keywords 'words))
-             ;; (x-types-regexp (regexp-opt x-types 'words))
 
              (x-type-def-regexp (concat "type\s\\(" t-re "\\)\s.+"))
              (x-ability-def-regexp (concat "ability\s\\(" t-re "\\)\s.+"))
              (x-namespace-def-regexp (concat "namespace\s\\(" n-re "\\)\s+where"))
-
-             (x-namespaced-regexp "[^A-Za-z]\\([A-Za-z\\.]+\\.\\)")
-             ;; TODO fix this
 
              (x-arrow-regexp "->")
              (x-colon-regexp ":")
              (x-apex-regexp "'")
              (x-esc-regexp "!")
 
+             (x-ability-regexp (concat "{\s*\\(" t-re "\\)\s"))
              (x-func-sig-regexp (concat "\\([" n-re ".+\s+\\):\s+.*$"))
+             (x-type-regexp (concat "[^a-z]\\(" t-re "\\)"))
 
-             ;; (x-func-type-regexp ".+\s:\s.+\\([A-Z]\w+\\)")
-             ;; this one needs lookbehind and lookahead
-             (x-func-type-regexp (concat ".+\s+:\s.*\\(" t-re "\\)"))
-
-             (x-type-constructor-regexp "[^A-Za-z]\\([A-Z][A-Za-z]+\\)\s*")
+             (x-type-dot ".*\..*\s")
 
              )
              `(
                (,x-keywords-regexp . font-lock-keyword-face)
                (,x-func-sig-regexp . (1 font-lock-function-name-face))
                (,x-namespace-def-regexp . (1 font-lock-constant-face))
-               (,x-func-type-regexp . (1 font-lock-constant-face))
-               ;; (,x-namespaced-regexp . (1 font-lock-constant-face))
-               (,x-type-def-regexp . (1 font-lock-constant-face))
                (,x-ability-def-regexp . (1 font-lock-constant-face))
-               ;; (,x-type-constructor-regexp . (1 font-lock-type-face))
-
+               (,x-type-def-regexp . (1 font-lock-type-face))
+               (,x-ability-regexp . (1 font-lock-constant-face))
+               (,x-type-dot . font-lock-defaults)
+               (,x-type-regexp . (1 font-lock-type-face))
                (,x-arrow-regexp . font-lock-keyword-face)
                (,x-colon-regexp . font-lock-keyword-face)
                (,x-apex-regexp . font-lock-negation-char-face)
