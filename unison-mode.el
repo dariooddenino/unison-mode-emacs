@@ -69,7 +69,7 @@
              (x-func-sig-regexp (concat "\\([" n-re ".+\s+\\):\s+.*$"))
              (x-type-regexp (concat "[^a-z]\\(" t-re "\\)"))
 
-             (x-type-dot ".*\..*\s")
+             (x-type-dot (concat t-re "\.+"))
 
              )
              `(
