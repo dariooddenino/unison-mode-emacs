@@ -154,6 +154,8 @@
   (setq-local comment-start "--  ")
   (setq-local comment-end ""))
 
+;;;###autoload
+(add-to-list 'auto-mode-alist '("\\.u\\'" . unison-mode))
 
 ;; add the mode
 (provide 'unison-mode)
