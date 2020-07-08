@@ -98,23 +98,6 @@
                           (list 'syntax-table unison-mode-syntax-table-fold)))
                    (forward-line 1))))
 
-
-;;;###autoload
-(define-derived-mode unison-mode prog-mode "unison-mode"
-  "Major mode for editing Unison"
-
-  :syntax-table unison-mode-syntax-table
-  ;; Apply the custom syntax table
-;;  (setq syntax-propertize-function 'apply-custom-syntax-table)
-
-
-  (setq font-lock-defaults '(unison-font-lock-keywords))
-  (font-lock-ensure)
-
-  (setq-local comment-start "--  ")
-  (setq-local comment-end ""))
-
-
 (defun unison-mode-add-fold ()
   "Add a fold above the current line."
   (interactive)
@@ -150,7 +133,29 @@
      (delete-line)))
 
 
-;; add the mode for the 'features' list
+(defvar unison-mode-map nil "Keymap for `unison-mode'.")
+(progn
+  (setq unison-mode-map (make-sparse-keymap))
+  (define-key unison-mode-map (kbd "C-c C-f") 'unison-mode-add-fold)
+  (define-key unison-mode-map (kbd "C-c C-d") 'unison-mode-remove-fold))
+
+;;;###autoload
+(define-derived-mode unison-mode prog-mode "unison-mode"
+  "Major mode for editing Unison"
+
+  :syntax-table unison-mode-syntax-table
+  ;; Apply the custom syntax table
+;;  (setq syntax-propertize-function 'apply-custom-syntax-table)
+
+
+  (setq font-lock-defaults '(unison-font-lock-keywords))
+  (font-lock-ensure)
+
+  (setq-local comment-start "--  ")
+  (setq-local comment-end ""))
+
+
+;; add the mode
 (provide 'unison-mode)
 
 ;;; unison-mode.el ends here

@@ -53,6 +53,9 @@ Multiline
 
 documentation
 :]
+
+---
+
 Stream.map f s =
   go _ = emit (f ask)
          !go
