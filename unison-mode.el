@@ -31,10 +31,11 @@
     (modify-syntax-entry ?\] ". 4" table)
     table))
 
-(defconst unison-mode-syntax-table-fold
-  (let ((table (make-syntax-table)))
-    (modify-syntax-entry ?/ ". 12")
-    table))
+;; (defconst unison-mode-syntax-table-fold
+;;   (let ((table (make-syntax-table)))
+;;     (modify-syntax-entry ?- ". 12" table)
+;;     (modify-syntax-entry ?^ ">" table)
+;;     table))
 
 (setq unison-font-lock-keywords
       (let* (
@@ -43,6 +44,8 @@
              (t-re "[A-Z_][A-Za-z_!'0-9]*")
              (n-re "[A-Za-z_][A-Za-z_!'0-9]*")
              (o-re "[!$%^&*-=\\+<>.~\\/|:]+")
+
+             (x-fold-regexp "---.*")
 
              ;; define several categories of keywords
              (x-keywords '("type" "namespace" "use" "if" "else" "unique" "ability" "where" "match" "cases" "let" "with" "handle" "forall" "infix" "infixl" "infixr" "module"))
@@ -67,6 +70,7 @@
 
 
         `(
+          (,x-fold-regexp . font-lock-comment-face)
           (,x-keywords-regexp . font-lock-keyword-face)
           (,x-func-sig-regexp . (1 font-lock-function-name-face))
           (,x-namespace-def-regexp . (1 font-lock-constant-face))
@@ -81,27 +85,29 @@
           (,x-esc-regexp . font-lock-negation-char-face))))
 
 
-(defun apply-custom-syntax-table (beg end)
-       (save-excursion
-             (save-restriction
-                   (widen)
-                   (goto-char beg)
-                   ;; for every line between points BEG and END
-                   (while (and (not (eobp)) (< (point) end))
-                     ;; remove current syntax-table property
-                     (remove-text-properties (1- (line-beginning-position))
-                             (1+ (line-end-position))
-                             '(syntax-table))
-                     ;; set syntax-table to the fold one
-                     (add-text-properties (1- (line-beginning-position))
-                          (1+ (line-end-position))
-                          (list 'syntax-table unison-mode-syntax-table-fold)))
-                   (forward-line 1))))
+;; (defun apply-custom-syntax-table (beg end)
+;;   "Apply a different syntax table for code under the fold."
+;;   (save-excursion
+;;     (save-restriction
+;;       (widen)
+;;       (goto-char beg)
+;;       (when (search-forward "---" nil nil)
+;;         ;; for every line between points the fold and END
+;;         (while (and (not (eobp)) (< (point) end))
+;;           ;; remove current syntax-table property
+;;           (remove-text-properties
+;;                   (1- (line-beginning-position))
+;;                   (1+ (line-end-position))
+;;                   '(syntax-table))
+;;           ;; set syntax-table to the fold one
+;;           (add-text-properties (1- (line-beginning-position))
+;;                (1+ (line-end-position))
+;;                (list 'syntax-table unison-mode-syntax-table-fold))
+;;           (forward-line 1))))))
 
 (defun unison-mode-add-fold ()
   "Add a fold above the current line."
   (interactive)
-;;  (save-excursion
   (newline)
   (newline)
   (newline)
@@ -109,8 +115,6 @@
     (forward-line -2)
     (insert "---")))
 
-
-;; TODO Is the "Search failed" error a problem (missing "---")?
 (defun unison-mode-remove-fold ()
   "Remove the fold directly above the current line."
   (interactive)
@@ -145,7 +149,7 @@
 
   :syntax-table unison-mode-syntax-table
   ;; Apply the custom syntax table
-;;  (setq syntax-propertize-function 'apply-custom-syntax-table)
+  ;; (setq syntax-propertize-function 'apply-custom-syntax-table)
 
 
   (setq font-lock-defaults '(unison-font-lock-keywords))

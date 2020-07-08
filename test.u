@@ -54,20 +54,30 @@ Multiline
 documentation
 :]
 
----
+Stream.pipe : '{Stream a} () -> '{Ask a, Stream b} r -> '{Stream b} ()
+Stream.pipe s f _ =
+  h s = cases
+    {_} -> ()
+    {Ask.ask -> resumeF} ->
+      handle !s with cases
+        {_} -> ()
+        {Stream.emit a -> resumeS} ->
+          handle resumeF a with h resumeS
+    {Stream.emit b -> resumeF} ->
+      emit b
+      handle resumeF () with h s
+  handle !f with h s
 
-Stream.map f s =
-  go _ = emit (f ask)
-         !go
+Stream.filter f s =
+  go _ =
+    a = ask
+    if f a then emit a
+    else !go
   Stream.pipe s go
 
--- standard comment
+Stream.filter.doc = [:
+Multiline
 
-Stream.pipe.doc = [:
-
-test
-
+documentation
 :]
-
-foo : Nat
-foo = 4
+^
