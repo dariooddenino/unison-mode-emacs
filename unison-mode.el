@@ -19,17 +19,6 @@
 
 ;;; Code:
 
-;; (setq unison-font-lock-keywords
-;;       (let* (
-;;              (x-keywords '("namespace", "type"))
-
-;;              ;; generate regex string for each category of keywords
-;;              (x-keywords-regexp (regexp-opt x-keywords 'words)))
-
-;;         `(
-;;           (,x-keywords-regexp . font-lock-keyword-face)
-;;        )))
-
 (defconst unison-mode-syntax-table
   (let ((table (make-syntax-table)))
     ;; -- Are comments
@@ -40,6 +29,11 @@
     (modify-syntax-entry ?\[ ". 1" table)
     (modify-syntax-entry ?: ". 23b" table)
     (modify-syntax-entry ?\] ". 4" table)
+    table))
+
+(defconst unison-mode-syntax-table-fold
+  (let ((table (make-syntax-table)))
+    (modify-syntax-entry ?/ ". 12")
     table))
 
 (setq unison-font-lock-keywords
@@ -72,32 +66,54 @@
              (x-type-dot (concat t-re "\.+"))
 
              )
-             `(
-               (,x-keywords-regexp . font-lock-keyword-face)
-               (,x-func-sig-regexp . (1 font-lock-function-name-face))
-               (,x-namespace-def-regexp . (1 font-lock-constant-face))
-               (,x-ability-def-regexp . (1 font-lock-constant-face))
-               (,x-type-def-regexp . (1 font-lock-type-face))
-               (,x-ability-regexp . (1 font-lock-constant-face))
-               (,x-type-dot . font-lock-defaults)
-               (,x-type-regexp . (1 font-lock-type-face))
-               (,x-arrow-regexp . font-lock-keyword-face)
-               (,x-colon-regexp . font-lock-keyword-face)
-               (,x-apex-regexp . font-lock-negation-char-face)
-               (,x-esc-regexp . font-lock-negation-char-face)
-             )))
+        `(
+          (,x-keywords-regexp . font-lock-keyword-face)
+          (,x-func-sig-regexp . (1 font-lock-function-name-face))
+          (,x-namespace-def-regexp . (1 font-lock-constant-face))
+          (,x-ability-def-regexp . (1 font-lock-constant-face))
+          (,x-type-def-regexp . (1 font-lock-type-face))
+          (,x-ability-regexp . (1 font-lock-constant-face))
+          (,x-type-dot . font-lock-defaults)
+          (,x-type-regexp . (1 font-lock-type-face))
+          (,x-arrow-regexp . font-lock-keyword-face)
+          (,x-colon-regexp . font-lock-keyword-face)
+          (,x-apex-regexp . font-lock-negation-char-face)
+          (,x-esc-regexp . font-lock-negation-char-face)
+          )))
+
+(defun apply-custom-syntax-table (beg end)
+       (save-excursion
+             (save-restriction
+                   (widen)
+                   (goto-char beg)
+                   ;; for every line between points BEG and END
+                   (while (and (not (eobp)) (< (point) end))
+                     ;; remove current syntax-table property
+                     (remove-text-properties (1- (line-beginning-position))
+                             (1+ (line-end-position))
+                             '(syntax-table))
+                     ;; set syntax-table to the fold one
+                     (add-text-properties (1- (line-beginning-position))
+                          (1+ (line-end-position))
+                          (list 'syntax-table unison-mode-syntax-table-fold)))
+                   (forward-line 1))))
+
 
 ;;;###autoload
 (define-derived-mode unison-mode prog-mode "unison-mode"
   "Major mode for editing Unison"
 
   :syntax-table unison-mode-syntax-table
+  ;; Apply the custom syntax table
+;;  (setq syntax-propertize-function 'apply-custom-syntax-table)
+
+
   (setq font-lock-defaults '(unison-font-lock-keywords))
   (font-lock-ensure)
 
   (setq-local comment-start "--  ")
-  (setq-local comment-end "")
-  )
+  (setq-local comment-end ""))
+
 
 (defun unison-mode-add-fold ()
   "Add a fold above the current line."
