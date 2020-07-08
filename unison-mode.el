@@ -93,10 +93,22 @@
 
   :syntax-table unison-mode-syntax-table
   (setq font-lock-defaults '(unison-font-lock-keywords))
-  (font-lock-fontify-buffer)
+  (font-lock-ensure)
 
-  ;; code for syntax highlighting
-  ;; (setq font-lock-defaults '((unison-font-lock-keywords)))
+  (setq-local comment-start "--  ")
+  (setq-local comment-end "")
+  )
+
+(defun unison-mode-add-fold ()
+  "Add a fold above the current line."
+  (interactive)
+  (save-excursion
+    (newline)
+    (newline)
+    (newline)
+    (forward-line -2)
+    (insert "---")
+    )
   )
 
 ;; add the mode for the 'features' list
