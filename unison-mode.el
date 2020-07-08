@@ -63,9 +63,9 @@
              (x-func-sig-regexp (concat "\\([" n-re ".+\s+\\):\s+.*$"))
              (x-type-regexp (concat "[^a-z]\\(" t-re "\\)"))
 
-             (x-type-dot (concat t-re "\.+"))
+             (x-type-dot (concat t-re "\.+")))
 
-             )
+
         `(
           (,x-keywords-regexp . font-lock-keyword-face)
           (,x-func-sig-regexp . (1 font-lock-function-name-face))
@@ -78,8 +78,8 @@
           (,x-arrow-regexp . font-lock-keyword-face)
           (,x-colon-regexp . font-lock-keyword-face)
           (,x-apex-regexp . font-lock-negation-char-face)
-          (,x-esc-regexp . font-lock-negation-char-face)
-          )))
+          (,x-esc-regexp . font-lock-negation-char-face))))
+
 
 (defun apply-custom-syntax-table (beg end)
        (save-excursion
@@ -118,14 +118,37 @@
 (defun unison-mode-add-fold ()
   "Add a fold above the current line."
   (interactive)
+;;  (save-excursion
+  (newline)
+  (newline)
+  (newline)
   (save-excursion
-    (newline)
-    (newline)
-    (newline)
     (forward-line -2)
-    (insert "---")
-    )
-  )
+    (insert "---")))
+
+
+;; TODO Is the "Search failed" error a problem (missing "---")?
+(defun unison-mode-remove-fold ()
+  "Remove the fold directly above the current line."
+  (interactive)
+  (defun delete-line ()
+    "Delete the current line if empty."
+    (let (start end content)
+      (setq start (line-beginning-position))
+      (setq end (line-end-position))
+      (setq content (buffer-substring start end))
+      (if (eq start end)
+        (delete-region start (+ 1 end))
+        (if (string-equal content "---")
+          (delete-region start (+ 1 end))
+          (forward-line 1)))))
+  (progn
+     (goto-char (search-backward "---"))
+     (forward-line -1)
+     (delete-line)
+     (delete-line)
+     (delete-line)))
+
 
 ;; add the mode for the 'features' list
 (provide 'unison-mode)

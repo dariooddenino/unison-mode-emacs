@@ -1,0 +1,70 @@
+Stream.sum : '{Stream Nat} () -> Nat
+Stream.sum ns =
+  h : Nat -> Request {Stream Nat} () -> Nat
+  h acc = cases
+    {_} -> acc
+    {Stream.emit n -> resume} ->
+      handle resume () with h (acc + n)
+  handle !ns with h 0
+
+Stream.foldLeft : (b -> a -> b) -> b -> '{Stream a} () -> b
+Stream.foldLeft f b s =
+  h acc = cases
+    {_} -> acc
+    {Stream.emit a -> resume} ->
+      handle resume () with h (f acc a)
+  handle !s with h b
+
+Stream.terminated : '{Stream a} () -> '{Stream (Optional a)} ()
+Stream.terminated s _ =
+  h : Request {Stream a} () ->{Stream (Optional a)} ()
+  h = cases
+    {_} -> emit None
+    {Stream.emit a -> resume} ->
+      emit (Some a)
+      handle resume () with h
+  handle !s with h
+
+Stream.sum' = Stream.foldLeft (Nat.+) 0
+
+Stream.pipe : '{Stream a} () -> '{Ask a, Stream b} r -> '{Stream b} ()
+Stream.pipe s f _ =
+  h s = cases
+    {_} -> ()
+    {Ask.ask -> resumeF} ->
+      handle !s with cases
+        {_} -> ()
+        {Stream.emit a -> resumeS} ->
+          handle resumeF a with h resumeS
+    {Stream.emit b -> resumeF} ->
+      emit b
+      handle resumeF () with h s
+  handle !f with h s
+
+Stream.filter f s =
+  go _ =
+    a = ask
+    if f a then emit a
+    else !go
+  Stream.pipe s go
+
+Stream.filter.doc = [:
+Multiline
+
+documentation
+:]
+Stream.map f s =
+  go _ = emit (f ask)
+         !go
+  Stream.pipe s go
+
+-- standard comment
+
+Stream.pipe.doc = [:
+
+test
+
+:]
+
+foo : Nat
+foo = 4
