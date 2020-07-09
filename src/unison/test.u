@@ -1,3 +1,39 @@
+-- Signatures
+
+foo : Nat
+foo = 3
+
+bar = 2
+
+function1' : Nat -> Nat
+function1' x = x
+
+Foo.function1 : Nat -> Nat -> Nat
+Foo.function1 x x = x
+
+Bar.Foo.function1 : a -> a
+Bar.Foo.function1 x = x
+
+function2 : 'Nat
+function2 _ = 3
+
+function3 : '{IO} ()
+function3 _ = !(_ -> ())
+
+function4 : () -> ()
+function4 _ = ()
+
+namespace Foo
+
+  function2 : Nat  -> Nat
+  function2 x = x
+
+  function3 : a -> a
+  function3 x = x
+
+  function4 : 'a -> Nat
+  function4 _ _ = 3
+
 Stream.sum : '{Stream Nat} () -> Nat
 Stream.sum ns =
   h : Nat -> Request {Stream Nat} () -> Nat
