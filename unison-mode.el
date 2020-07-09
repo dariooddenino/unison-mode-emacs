@@ -31,12 +31,6 @@
     (modify-syntax-entry ?\] ". 4" table)
     table))
 
-;; (defconst unison-mode-syntax-table-fold
-;;   (let ((table (make-syntax-table)))
-;;     (modify-syntax-entry ?- ". 12" table)
-;;     (modify-syntax-entry ?^ ">" table)
-;;     table))
-
 (setq unison-font-lock-keywords
       (let* (
              ;; Regex for identifiers
@@ -45,7 +39,7 @@
              (n-re "[A-Za-z_][A-Za-z_!'0-9]*")
              (o-re "[!$%^&*-=\\+<>.~\\/|:]+")
 
-             (x-fold-regexp "---.*")
+             (x-fold-regexp "---\\(\n\\|.\\)*")
 
              ;; define several categories of keywords
              (x-keywords '("type" "namespace" "use" "if" "else" "unique" "ability" "where" "match" "cases" "let" "with" "handle" "forall" "infix" "infixl" "infixr" "module"))
@@ -70,7 +64,7 @@
 
 
         `(
-          (,x-fold-regexp . font-lock-comment-face)
+          (,x-fold-regexp . (0 font-lock-comment-face t))
           (,x-keywords-regexp . font-lock-keyword-face)
           (,x-func-sig-regexp . (1 font-lock-function-name-face))
           (,x-namespace-def-regexp . (1 font-lock-constant-face))
@@ -83,27 +77,6 @@
           (,x-colon-regexp . font-lock-keyword-face)
           (,x-apex-regexp . font-lock-negation-char-face)
           (,x-esc-regexp . font-lock-negation-char-face))))
-
-
-;; (defun apply-custom-syntax-table (beg end)
-;;   "Apply a different syntax table for code under the fold."
-;;   (save-excursion
-;;     (save-restriction
-;;       (widen)
-;;       (goto-char beg)
-;;       (when (search-forward "---" nil nil)
-;;         ;; for every line between points the fold and END
-;;         (while (and (not (eobp)) (< (point) end))
-;;           ;; remove current syntax-table property
-;;           (remove-text-properties
-;;                   (1- (line-beginning-position))
-;;                   (1+ (line-end-position))
-;;                   '(syntax-table))
-;;           ;; set syntax-table to the fold one
-;;           (add-text-properties (1- (line-beginning-position))
-;;                (1+ (line-end-position))
-;;                (list 'syntax-table unison-mode-syntax-table-fold))
-;;           (forward-line 1))))))
 
 (defun unison-mode-add-fold ()
   "Add a fold above the current line."
@@ -136,12 +109,25 @@
      (delete-line)
      (delete-line)))
 
-
 (defvar unison-mode-map nil "Keymap for `unison-mode'.")
 (progn
   (setq unison-mode-map (make-sparse-keymap))
   (define-key unison-mode-map (kbd "C-c C-f") 'unison-mode-add-fold)
   (define-key unison-mode-map (kbd "C-c C-d") 'unison-mode-remove-fold))
+
+(defun unison-font-lock-extend-region ()
+  "Extend the search region to include an entire block of text."
+  ;; Avoid compiler warnings about these global variables from font-lock.el.
+  ;; See the documentation for variable `font-lock-extend-region-functions'.
+  (eval-when-compile (defvar font-lock-beg) (defvar font-lock-end))
+  (save-excursion
+    (goto-char font-lock-beg)
+    (let ((found (or (re-search-backward "\n\n" nil t) (point-min))))
+      (goto-char font-lock-end)
+      (when (re-search-forward "\n\n" nil t)
+        (beginning-of-line)
+        (setq font-lock-end (point)))
+      (setq font-lock-beg found))))
 
 ;;;###autoload
 (define-derived-mode unison-mode prog-mode "unison-mode"
@@ -153,6 +139,8 @@
 
 
   (setq font-lock-defaults '(unison-font-lock-keywords))
+  (setq font-lock-multiline t)
+  (add-hook 'font-lock-extend-region-functions 'unison-font-lock-extend-region)
   (font-lock-ensure)
 
   (setq-local comment-start "--  ")

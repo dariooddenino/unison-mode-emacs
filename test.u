@@ -54,6 +54,8 @@ Multiline
 documentation
 :]
 
+---
+
 Stream.pipe : '{Stream a} () -> '{Ask a, Stream b} r -> '{Stream b} ()
 Stream.pipe s f _ =
   h s = cases
@@ -80,4 +82,3 @@ Multiline
 
 documentation
 :]
-^
