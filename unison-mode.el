@@ -42,7 +42,7 @@
              ;; TODO include unicode characters
              (identifier-regexp "[A-Za-z_][A-Za-z_!'0-9]*")
              ;; namespaced identifier
-             (namespaced-regexp (concat "\\(\\.\\|" identifier-regexp "\\)*"))
+             (namespaced-regexp (concat "\\(?:\\.\\|" identifier-regexp "\\)*"))
 
              ;; Handle the unison fold
              (x-fold-regexp "---\\(\n\\|.\\)*")
@@ -64,7 +64,7 @@
 
              ;; Signautres
              (x-sig-regexp (concat "\\(" namespaced-regexp "\s+\\):"))
-             (x-body-regexp (concat "\\(" namespaced-regexp "\s+\\).*="))
+             (x-body-regexp (concat "\\(?:\s*\\)\\(" namespaced-regexp "\\).*="))
 
 
              (x-type-def-regexp (concat "type\s\\(" t-re "\\)\s.+"))
