@@ -3,84 +3,99 @@
 
 «f:bar» = «:highlight-numbers-number:2»
 
-«f:function1' »«k::» Nat «k:->» Nat
+«k:ability» «v:Stream» e «k:where»
+  «f:emit» «k::» e «k:->» ()
+
+«f:function1'» «k::» «t:Nat» «k:->» «t:Nat»
 «f:function1'» x = x
 
-«f:Foo.function1 »«k::» Nat «k:->» Nat «k:->» Nat
+«f:Foo.function1» «k::» «t:Nat» «k:->» «t:Nat» «k:->» «t:Nat»
 «f:Foo.function1» x x = x
 
-«f:Bar.Foo.function1 »«k::» a «k:->» a
+«f:Bar.Foo.function1» «k::» a «k:->» a
 «f:Bar.Foo.function1» x = x
 
-«f:function2 »«k::» «k:'»Nat
-«f:function2» _ = «:highlight-numbers-number:3»
+«f:function2» «k::» «k:'»«t:Nat»
+«f:function2» «t:_» = «:highlight-numbers-number:3»
 
-«f:function3 »«k::» «k:'»{IO} ()
-«f:function3» _ = «k:!»(_ «k:->» ())
+«f:function3» «k::» «k:'»{«v:IO», «v:Stream» e, g} ()
+«f:function3» «t:_» = «k:!»(«t:_» «k:->» ())
 
-«f:function4 »«k::» () «k:->» ()
-«f:function4» _ = ()
+«f:function4» «k::» () «k:->» ()
+«f:function4» «t:_» = ()
 
 «k:namespace» «c:Foo.Bar» «k:where»
 
-  «f:function2 »«k::» Nat  «k:->» Nat
+  «k:type» «t:Hello» a = «t:Hello» a
+  «k:unique» «k:type» «t:Hallo» a = «t:Hallo» a
+
+  «k:ability» «v:Stremo» e «k:where»
+    «f:emito» «k::» e «k:->» ()
+
+  «f:function2» «k::» «t:Nat»  «k:->» «t:Nat»
   «f:function2» x = x
 
-  «f:function3 »«k::» a «k:->» a
+  «f:function3» «k::» a «k:->» a
   «f:function3» x = x
 
-  «f:function4 »«k::» «k:'»a «k:->» Nat
-  «f:function4» _ = «:highlight-numbers-number:3»
+  «f:function4» «k::» «k:'»a «k:->» «t:Nat»
+  «f:function4» «t:_» = «:highlight-numbers-number:3»
 
-«f:Stream.sum »«k::» «k:'»{Stream Nat} () «k:->» Nat
+«k:type» «t:Optional» a = «t:None» | «t:Some» a
+
+«k:use» «c:.base»
+
+«k:use» «c:Bar»
+
+«f:Stream.sum» «k::» «k:'»{«v:Stream» «t:Nat»} () «k:->» «t:Nat»
 «f:Stream.sum» ns =
-  «f:h »«k::» Nat «k:->» Request {Stream Nat} () «k:->» Nat
+  «f:h» «k::» «t:Nat» «k:->» «p:Request» {«v:Stream» «t:Nat»} () «k:->» «t:Nat»
   «f:h» acc = «k:cases»
-    {_} «k:->» acc
-    {Stream.emit n «k:->» resume} «k:->»
+    {«v:_»} «k:->» acc
+    {«v:Stream».emit n «k:->» resume} «k:->»
       «k:handle» resume () «k:with» h (acc + n)
   «k:handle» «k:!»ns «k:with» h «:highlight-numbers-number:0»
 
-«f:Stream.foldLeft »«k::» (b «k:->» a «k:->» b) «k:->» b «k:->» «k:'»{Stream a} () «k:->» b
+«f:Stream.foldLeft» «k::» (b «k:->» a «k:->» b) «k:->» b «k:->» «k:'»{«v:Stream» a} () «k:->» b
 «f:Stream.foldLeft» f b s =
   «f:h» acc = «k:cases»
-    {_} «k:->» acc
-    {Stream.emit a «k:->» resume} «k:->»
+    {«v:_»} «k:->» acc
+    {«v:Stream».emit a «k:->» resume} «k:->»
       «k:handle» resume () «k:with» h (f acc a)
   «k:handle» «k:!»s «k:with» h b
 
-«f:Stream.terminated »«k::» «k:'»{Stream a} () «k:->» «k:'»{Stream (Optional a)} ()
-«f:Stream.terminated» s _ =
-  «f:h »«k::» Request {Stream a} () «k:->»{Stream (Optional a)} ()
+«f:Stream.terminated» «k::» «k:'»{«v:Stream» a} () «k:->» «k:'»{«v:Stream» («t:Optional» a)} ()
+«f:Stream.terminated» s «t:_» =
+  «f:h» «k::» «p:Request» {«v:Stream» a} () «k:->»{«v:Stream» («t:Optional» a)} ()
   «f:h» = «k:cases»
-    {_} «k:->» emit None
-    {Stream.emit a «k:->» resume} «k:->»
-      emit (Some a)
+    {«v:_»} «k:->» emit «t:None»
+    {«v:Stream».emit a «k:->» resume} «k:->»
+      emit («t:Some» a)
       «k:handle» resume () «k:with» h
   «k:handle» «k:!»s «k:with» h
 
-«f:Stream.sum'» = Stream.foldLeft (Nat.+) «:highlight-numbers-number:0»
+«f:Stream.sum'» = «t:Stream».foldLeft («t:Nat».+) «:highlight-numbers-number:0»
 
-«f:Stream.pipe »«k::» «k:'»{Stream a} () «k:->» «k:'»{Ask a, Stream b} r «k:->» «k:'»{Stream b} ()
-«f:Stream.pipe» s f _ =
+«f:Stream.pipe» «k::» «k:'»{«v:Stream» a} () «k:->» «k:'»{«v:Ask» a, «v:Stream» b} r «k:->» «k:'»{«v:Stream» b} ()
+«f:Stream.pipe» s f «t:_» =
   «f:h» s = «k:cases»
-    {_} «k:->» ()
-    {Ask.ask «k:->» resumeF} «k:->»
+    {«v:_»} «k:->» ()
+    {«v:Ask».ask «k:->» resumeF} «k:->»
       «k:handle» «k:!»s «k:with» «k:cases»
-        {_} «k:->» ()
-        {Stream.emit a «k:->» resumeS} «k:->»
+        {«v:_»} «k:->» ()
+        {«v:Stream».emit a «k:->» resumeS} «k:->»
           «k:handle» resumeF a «k:with» h resumeS
-    {Stream.emit b «k:->» resumeF} «k:->»
+    {«v:Stream».emit b «k:->» resumeF} «k:->»
       emit b
       «k:handle» resumeF () «k:with» h s
   «k:handle» «k:!»f «k:with» h s
 
 «f:Stream.filter» f s =
-  «f:go» _ =
+  «f:go» «t:_» =
     «f:a» = ask
     «k:if» f a «k:then» emit a
     «k:else» «k:!»go
-  Stream.pipe s go
+  «t:Stream».pipe s go
 
 «f:Stream.filter.doc» = «x:[:
 Multiline

@@ -1,9 +1,10 @@
--- Signatures
-
-foo : Nat
+-- Signatures foo : Nat
 foo = 3
 
 bar = 2
+
+ability Stream e where
+  emit : e -> ()
 
 function1' : Nat -> Nat
 function1' x = x
@@ -17,13 +18,19 @@ Bar.Foo.function1 x = x
 function2 : 'Nat
 function2 _ = 3
 
-function3 : '{IO} ()
+function3 : '{IO, Stream e, g} ()
 function3 _ = !(_ -> ())
 
 function4 : () -> ()
 function4 _ = ()
 
 namespace Foo.Bar where
+
+  type Hello a = Hello a
+  unique type Hallo a = Hallo a
+
+  ability Stremo e where
+    emito : e -> ()
 
   function2 : Nat  -> Nat
   function2 x = x
@@ -33,6 +40,12 @@ namespace Foo.Bar where
 
   function4 : 'a -> Nat
   function4 _ = 3
+
+type Optional a = None | Some a
+
+use .base
+
+use Bar
 
 Stream.sum : '{Stream Nat} () -> Nat
 Stream.sum ns =

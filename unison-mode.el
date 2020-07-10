@@ -34,10 +34,11 @@
 (setq unison-font-lock-keywords
       (let* (
              ;; Regex for identifiers
-             ;; TODO what are these three for?
-             (i-re "[a-z_][A-Za-z_!'0-9]*")
-             (t-re "[A-Z_][A-Za-z_!'0-9]*")
-             (o-re "[!$%^&*-=\\+<>.~\\/|:]+")
+             ;; (i-re "[a-z_][A-Za-z_!'0-9]*")
+             ;;(o-re "[!$%^&*-=\\+<>.~\\/|:]+")
+
+             ;; Type identifier
+             (type-regexp "[A-Z_][A-Za-z_!'0-9]*")
              ;; A valid identifier
              ;; TODO include unicode characters
              (identifier-regexp "[A-Za-z_][A-Za-z_!'0-9]*")
@@ -59,44 +60,50 @@
              ;; (x-single-quote-exc-regexp (regexp-opt x-single-quote-exc 1))
              (x-keywords-full-regexp (concat x-keywords-regexp "\\|" x-symbol-keywords-regexp))
 
+             (x-request-regexp "Request")
+
              ;; single quote or exclamation point when it's not part of an identifier
              (x-single-quote-exc-regexp "\\(\s\\)\\(!\\|'\\)")
 
              ;; Signautres
-             (x-sig-regexp (concat "\\(" namespaced-regexp "\s+\\):"))
-             (x-body-regexp (concat "\\(?:\s*\\)\\(" namespaced-regexp "\\).*="))
+             ;; This one is slowish
+             (x-sig-regexp (concat "\\(" namespaced-regexp "\\)\s+:"))
+             ;; This one is pretty slow
+             (x-int-regexp (concat "\\(?:\s\\)*\\(" namespaced-regexp "\\).*="))
 
+             ;; Namespaces definition
+             (x-namespace-def-regexp (concat "namespace\s+\\(" namespaced-regexp "\\)\s+where"))
+             ;; Namespaces import
+             (x-namespace-import-regexp (concat "use\s+\\(" namespaced-regexp "\\)"))
 
-             (x-type-def-regexp (concat "type\s\\(" t-re "\\)\s.+"))
-             (x-ability-def-regexp (concat "ability\s\\(" t-re "\\)\s.+"))
-             (x-namespace-def-regexp (concat "namespace\s\\(" namespaced-regexp "\\)\s+where"))
+             ;; Abilities
+             (x-ability-def-regexp (concat "ability\s\\(" type-regexp "\\)\s.+"))
+             ;;(x-ability-regexp (concat "{\\(?:.*\\|\\(" type-regexp "\\)\\)}"))
+             (x-ability-regexp (concat "[{,].*?\\(" type-regexp "\\)"))
+
+             (x-type-def-regexp (concat "type\s\\(" type-regexp "\\)\s.+"))
+             (x-type-regexp (concat "[^a-z]\\(" type-regexp "\\)"))
+
 
              (x-arrow-regexp "->")
              (x-colon-regexp ":")
              (x-apex-regexp "'")
-             (x-esc-regexp "!")
-
-             (x-ability-regexp (concat "{\s*\\(" t-re "\\)\s"))
-             (x-type-regexp (concat "[^a-z]\\(" t-re "\\)"))
-
-             (x-type-dot (concat t-re "\.+")))
+             (x-esc-regexp "!"))
 
 
         `(
           (,x-fold-regexp . (0 font-lock-comment-face t))
           (,x-keywords-full-regexp . font-lock-keyword-face)
           (,x-single-quote-exc-regexp . (2 font-lock-keyword-face))
+          (,x-request-regexp . font-lock-preprocessor-face)
           (,x-sig-regexp . (1 font-lock-function-name-face))
-          (,x-body-regexp . (1 font-lock-function-name-face))
+          (,x-int-regexp . (1 font-lock-function-name-face))
           (,x-namespace-def-regexp . (1 font-lock-constant-face))
-          ;; (,x-ability-def-regexp . (1 font-lock-constant-face))
-          ;; (,x-type-def-regexp . (1 font-lock-type-face))
-          ;; (,x-ability-regexp . (1 font-lock-constant-face))
-          ;; (,x-type-dot . font-lock-defaults)
-          ;; (,x-type-regexp . (1 font-lock-type-face))
-          ;; (,x-arrow-regexp . font-lock-keyword-face)
-          ;; (,x-colon-regexp . font-lock-keyword-face)
-          ;; (,x-apex-regexp . font-lock-negation-char-face)
+          (,x-namespace-import-regexp . (1 font-lock-constant-face))
+          (,x-ability-def-regexp . (1 font-lock-variable-name-face))
+          (,x-ability-regexp . (1 font-lock-variable-name-face))
+          (,x-type-def-regexp . (1 font-lock-type-face))
+          (,x-type-regexp . (1 font-lock-type-face))
           (,x-esc-regexp . font-lock-negation-char-face))))
 
 (defun unison-mode-add-fold ()
