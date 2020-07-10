@@ -3,7 +3,7 @@
 ;; Copyright © 2020, Dario Oddenino
 
 ;; Author: Dario Oddenino
-;; Version: 0.0.1
+;; Version: 0.1.0
 ;; Created: 24 Apr 2020
 ;; Keywords: languages
 
@@ -34,48 +34,74 @@
 (setq unison-font-lock-keywords
       (let* (
              ;; Regex for identifiers
-             (i-re "[a-z_][A-Za-z_!'0-9]*")
-             (t-re "[A-Z_][A-Za-z_!'0-9]*")
-             (n-re "[A-Za-z_][A-Za-z_!'0-9]*")
-             (o-re "[!$%^&*-=\\+<>.~\\/|:]+")
 
+             ;; Type identifier
+             (type-regexp "[A-Z_][A-Za-z_!'0-9]*")
+             ;; A valid identifier
+             ;; TODO include unicode characters
+             (identifier-regexp "[A-Za-z_][A-Za-z_!'0-9]*")
+             ;; namespaced identifier
+             (namespaced-regexp (concat "\\(?:\\.\\|" identifier-regexp "\\)+"))
+
+             ;; Handle the unison fold
              (x-fold-regexp "---\\(\n\\|.\\)*")
 
              ;; define several categories of keywords
-             (x-keywords '("type" "namespace" "use" "if" "else" "unique" "ability" "where" "match" "cases" "let" "with" "handle" "forall" "infix" "infixl" "infixr" "module"))
+             ;; symbol keywords
+             (x-symbol-keywords '(":" "->"))
+             ;; standard alphabetical keywords
+             (x-keywords '("if" "then" "else" "forall" "handle" "unique" "where" "use" "and" "or" "true" "false" "type" "ability" "alias" "let" "namespace" "cases" "match" "with"))
 
-             ;; generate regex strings for each category
+             ;; generate regex strings for each keyword category
              (x-keywords-regexp (regexp-opt x-keywords 'words))
+             (x-symbol-keywords-regexp (regexp-opt x-symbol-keywords 1))
+             ;; (x-single-quote-exc-regexp (regexp-opt x-single-quote-exc 1))
+             (x-keywords-full-regexp (concat x-keywords-regexp "\\|" x-symbol-keywords-regexp))
 
-             (x-type-def-regexp (concat "type\s\\(" t-re "\\)\s.+"))
-             (x-ability-def-regexp (concat "ability\s\\(" t-re "\\)\s.+"))
-             (x-namespace-def-regexp (concat "namespace\s\\(" n-re "\\)\s+where"))
+             (x-request-regexp "Request")
+
+             ;; single quote or exclamation point when it's not part of an identifier
+             (x-single-quote-exc-regexp "\\(\s\\)\\(!\\|'\\)")
+
+             ;; Signautres
+             ;; TODO: This one is slowish, but we can lvie with it.
+             (x-sig-regexp (concat "\\(" namespaced-regexp "\\)\s+:"))
+             ;; TODO: This one is VERY slow. Probably not worth enabling without SERIOUS optimization.
+             ;; (x-int-regexp (concat "\\(?:\s\\)*\\(" namespaced-regexp "\\).*="))
+
+             ;; Namespaces definition
+             (x-namespace-def-regexp (concat "namespace\s+\\(" namespaced-regexp "\\)\s+where"))
+             ;; Namespaces import
+             (x-namespace-import-regexp (concat "use\s+\\(" namespaced-regexp "\\)"))
+
+             ;; Abilities
+             (x-ability-def-regexp (concat "ability\s\\(" type-regexp "\\)\s.+"))
+             ;;(x-ability-regexp (concat "{\\(?:.*\\|\\(" type-regexp "\\)\\)}"))
+             (x-ability-regexp (concat "[{,].*?\\(" type-regexp "\\)"))
+
+             (x-type-def-regexp (concat "type\s\\(" type-regexp "\\)\s.+"))
+             (x-type-regexp (concat "[^a-z]\\(" type-regexp "\\)"))
+
 
              (x-arrow-regexp "->")
              (x-colon-regexp ":")
              (x-apex-regexp "'")
-             (x-esc-regexp "!")
-
-             (x-ability-regexp (concat "{\s*\\(" t-re "\\)\s"))
-             (x-func-sig-regexp (concat "\\([" n-re ".+\s+\\):\s+.*$"))
-             (x-type-regexp (concat "[^a-z]\\(" t-re "\\)"))
-
-             (x-type-dot (concat t-re "\.+")))
+             (x-esc-regexp "!"))
 
 
         `(
           (,x-fold-regexp . (0 font-lock-comment-face t))
-          (,x-keywords-regexp . font-lock-keyword-face)
-          (,x-func-sig-regexp . (1 font-lock-function-name-face))
+          (,x-keywords-full-regexp . font-lock-keyword-face)
+          (,x-single-quote-exc-regexp . (2 font-lock-keyword-face))
+          (,x-request-regexp . font-lock-preprocessor-face)
+          (,x-sig-regexp . (1 font-lock-function-name-face))
+          ;;(,x-int-regexp . (1 font-lock-function-name-face))
           (,x-namespace-def-regexp . (1 font-lock-constant-face))
-          (,x-ability-def-regexp . (1 font-lock-constant-face))
+          (,x-namespace-import-regexp . (1 font-lock-constant-face))
+          (,x-ability-def-regexp . (1 font-lock-variable-name-face))
+          (,x-ability-regexp . (1 font-lock-variable-name-face))
           (,x-type-def-regexp . (1 font-lock-type-face))
-          (,x-ability-regexp . (1 font-lock-constant-face))
-          (,x-type-dot . font-lock-defaults)
           (,x-type-regexp . (1 font-lock-type-face))
-          (,x-arrow-regexp . font-lock-keyword-face)
-          (,x-colon-regexp . font-lock-keyword-face)
-          (,x-apex-regexp . font-lock-negation-char-face)
           (,x-esc-regexp . font-lock-negation-char-face))))
 
 (defun unison-mode-add-fold ()
