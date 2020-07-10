@@ -34,8 +34,6 @@
 (setq unison-font-lock-keywords
       (let* (
              ;; Regex for identifiers
-             ;; (i-re "[a-z_][A-Za-z_!'0-9]*")
-             ;;(o-re "[!$%^&*-=\\+<>.~\\/|:]+")
 
              ;; Type identifier
              (type-regexp "[A-Z_][A-Za-z_!'0-9]*")
@@ -43,7 +41,7 @@
              ;; TODO include unicode characters
              (identifier-regexp "[A-Za-z_][A-Za-z_!'0-9]*")
              ;; namespaced identifier
-             (namespaced-regexp (concat "\\(?:\\.\\|" identifier-regexp "\\)*"))
+             (namespaced-regexp (concat "\\(?:\\.\\|" identifier-regexp "\\)+"))
 
              ;; Handle the unison fold
              (x-fold-regexp "---\\(\n\\|.\\)*")
@@ -66,10 +64,10 @@
              (x-single-quote-exc-regexp "\\(\s\\)\\(!\\|'\\)")
 
              ;; Signautres
-             ;; This one is slowish
+             ;; TODO: This one is slowish, but we can lvie with it.
              (x-sig-regexp (concat "\\(" namespaced-regexp "\\)\s+:"))
-             ;; This one is pretty slow
-             (x-int-regexp (concat "\\(?:\s\\)*\\(" namespaced-regexp "\\).*="))
+             ;; TODO: This one is VERY slow. Probably not worth enabling without SERIOUS optimization.
+             ;; (x-int-regexp (concat "\\(?:\s\\)*\\(" namespaced-regexp "\\).*="))
 
              ;; Namespaces definition
              (x-namespace-def-regexp (concat "namespace\s+\\(" namespaced-regexp "\\)\s+where"))
@@ -97,7 +95,7 @@
           (,x-single-quote-exc-regexp . (2 font-lock-keyword-face))
           (,x-request-regexp . font-lock-preprocessor-face)
           (,x-sig-regexp . (1 font-lock-function-name-face))
-          (,x-int-regexp . (1 font-lock-function-name-face))
+          ;;(,x-int-regexp . (1 font-lock-function-name-face))
           (,x-namespace-def-regexp . (1 font-lock-constant-face))
           (,x-namespace-import-regexp . (1 font-lock-constant-face))
           (,x-ability-def-regexp . (1 font-lock-variable-name-face))
