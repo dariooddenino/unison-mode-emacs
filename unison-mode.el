@@ -88,7 +88,7 @@
           (,x-single-quote-exc-regexp . (2 font-lock-keyword-face))
           (,x-sig-regexp . (1 font-lock-function-name-face))
           (,x-body-regexp . (1 font-lock-function-name-face))
-          ;; (,x-namespace-def-regexp . (1 font-lock-constant-face))
+          (,x-namespace-def-regexp . (1 font-lock-constant-face))
           ;; (,x-ability-def-regexp . (1 font-lock-constant-face))
           ;; (,x-type-def-regexp . (1 font-lock-type-face))
           ;; (,x-ability-regexp . (1 font-lock-constant-face))

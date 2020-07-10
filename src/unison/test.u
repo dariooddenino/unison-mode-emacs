@@ -23,7 +23,7 @@ function3 _ = !(_ -> ())
 function4 : () -> ()
 function4 _ = ()
 
-namespace Foo
+namespace Foo.Bar where
 
   function2 : Nat  -> Nat
   function2 x = x
@@ -32,7 +32,7 @@ namespace Foo
   function3 x = x
 
   function4 : 'a -> Nat
-  function4 _ _ = 3
+  function4 _ = 3
 
 Stream.sum : '{Stream Nat} () -> Nat
 Stream.sum ns =

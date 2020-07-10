@@ -1,7 +1,5 @@
-«x:-- Signatures
-»
-«f:foo »«k::» Nat
-«f:foo» = «:highlight-numbers-number:3»
+«x:-- Signatures foo : Nat
+»«f:foo» = «:highlight-numbers-number:3»
 
 «f:bar» = «:highlight-numbers-number:2»
 
@@ -23,7 +21,7 @@
 «f:function4 »«k::» () «k:->» ()
 «f:function4» _ = ()
 
-«k:namespace» Foo
+«k:namespace» «c:Foo.Bar» «k:where»
 
   «f:function2 »«k::» Nat  «k:->» Nat
   «f:function2» x = x
@@ -32,7 +30,7 @@
   «f:function3» x = x
 
   «f:function4 »«k::» «k:'»a «k:->» Nat
-  «f:function4» _ _ = «:highlight-numbers-number:3»
+  «f:function4» _ = «:highlight-numbers-number:3»
 
 «f:Stream.sum »«k::» «k:'»{Stream Nat} () «k:->» Nat
 «f:Stream.sum» ns =
