@@ -1,11 +1,13 @@
-;;; unison-mode.el --- simple major mode for editing Unison. -*- coding: utf-8; lexical-binding: t; -*-
+;;; unison-mode.el --- Simple major mode for editing Unison -*- coding: utf-8; lexical-binding: t; -*-
 
 ;; Copyright © 2020, Dario Oddenino
 
 ;; Author: Dario Oddenino
-;; Version: 0.1.0
+;; Version: 0.2.0
+;; Package-Requires: ((emacs "25.1"))
 ;; Created: 24 Apr 2020
 ;; Keywords: languages
+;; URL: https://github.com/unison-mode
 
 ;; This file is not part of GNU Emacs.
 
@@ -15,7 +17,7 @@
 
 ;;; Commentary:
 
-;; A simple major mode to edit Unison files (.u, .uu)
+;; A simple major mode to edit Unison files (.u)
 
 ;;; Code:
 
@@ -31,6 +33,7 @@
     (modify-syntax-entry ?\] ". 4" table)
     table))
 
+(defvar unison-font-lock-keywords)
 (setq unison-font-lock-keywords
       (let* (
              ;; Regex for identifiers
@@ -65,10 +68,6 @@
 
              ;; Signautres
              (x-sig-regexp (concat "^\s*?\\(" namespaced-regexp "\\).+?[:=]"))
-             ;; TODO: This one is slowish, but we can lvie with it.
-             ;;(x-sig-regexp (concat "\\(" namespaced-regexp "\\)\s+:"))
-             ;; TODO: This one is VERY slow. Probably not worth enabling without SERIOUS optimization.
-             ;; (x-int-regexp (concat "\\(?:\s\\)*\\(" namespaced-regexp "\\).*="))
 
              ;; Namespaces definition
              (x-namespace-def-regexp (concat "namespace\s+\\(" namespaced-regexp "\\)\s+where"))
@@ -83,10 +82,6 @@
              (x-type-def-regexp (concat "type\s\\(" type-regexp "\\)\s.+"))
              (x-type-regexp (concat "[^a-z]\\(" type-regexp "\\)"))
 
-
-             (x-arrow-regexp "->")
-             (x-colon-regexp ":")
-             (x-apex-regexp "'")
              (x-esc-regexp "!"))
 
 
@@ -96,7 +91,6 @@
           (,x-single-quote-exc-regexp . (2 font-lock-keyword-face))
           (,x-request-regexp . font-lock-preprocessor-face)
           (,x-sig-regexp . (1 font-lock-function-name-face))
-          ;;(,x-int-regexp . (1 font-lock-function-name-face))
           (,x-namespace-def-regexp . (1 font-lock-constant-face))
           (,x-namespace-import-regexp . (1 font-lock-constant-face))
           (,x-ability-def-regexp . (1 font-lock-variable-name-face))
@@ -115,26 +109,27 @@
     (forward-line -2)
     (insert "---")))
 
+(defun unison-delete-line ()
+  "Delete the current line if empty."
+  (let (start end content)
+    (setq start (line-beginning-position))
+    (setq end (line-end-position))
+    (setq content (buffer-substring start end))
+    (if (eq start end)
+      (delete-region start (+ 1 end))
+      (if (string-equal content "---")
+        (delete-region start (+ 1 end))
+        (forward-line 1)))))
+
 (defun unison-mode-remove-fold ()
   "Remove the fold directly above the current line."
   (interactive)
-  (defun delete-line ()
-    "Delete the current line if empty."
-    (let (start end content)
-      (setq start (line-beginning-position))
-      (setq end (line-end-position))
-      (setq content (buffer-substring start end))
-      (if (eq start end)
-        (delete-region start (+ 1 end))
-        (if (string-equal content "---")
-          (delete-region start (+ 1 end))
-          (forward-line 1)))))
   (progn
      (goto-char (search-backward "---"))
      (forward-line -1)
-     (delete-line)
-     (delete-line)
-     (delete-line)))
+     (unison-delete-line)
+     (unison-delete-line)
+     (unison-delete-line)))
 
 (defvar unison-mode-map nil "Keymap for `unison-mode'.")
 (progn
@@ -161,9 +156,6 @@
   "Major mode for editing Unison"
 
   :syntax-table unison-mode-syntax-table
-  ;; Apply the custom syntax table
-  ;; (setq syntax-propertize-function 'apply-custom-syntax-table)
-
 
   (setq font-lock-defaults '(unison-font-lock-keywords))
   (setq font-lock-multiline t)
