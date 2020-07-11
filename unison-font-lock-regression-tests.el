@@ -1,9 +1,9 @@
-;;; unison-font-lock-regression-suite.el --- Test suite for unison font-lock.
+;;; unison-font-lock-regression-tests.el --- Test suite for unison font-lock.
 
 ;; Copyright © 2020, Dario Oddenino
 
 ;; Author: Dario Oddenino
-;; Version: 0.1.0
+;; Version: 0.2.0
 ;; Created: 24 Apr 2020
 ;; Keywords: languages
 
@@ -23,21 +23,6 @@
 
 (defvar font-lock-regression-suite-languages
   '(("unison" unison-mode))
-  ;; '(("ada"         ada-mode)
-  ;;   ("autoconf"    autoconf-mode)
-  ;;   ("bat"         bat-mode)
-  ;;   ("C"           c-mode ("CWarn" c-mode cwarn-mode))
-  ;;   ("elisp"       emacs-lisp-mode)
-  ;;   ("f90"         f90-mode)
-  ;;   ("JavaScript"  js-mode)
-  ;;   ("m4"          m4-mode ("ac" autoconf-mode))
-  ;;   ("make"        makefile-mode)
-  ;;   ("Objective-C" objc-mode)
-  ;;   ("Perl"        perl-mode ("CPerl" cperl-mode))
-  ;;   ("PostScript"  ps-mode)
-  ;;   ("prolog"      prolog-mode)
-  ;;   ("Python"      python-mode)
-  ;;   ("Ruby"        ruby-mode))
   "List of directories and corresponding modes.
 Each entry in the list has the following format:
     (DIR MODE-OR-MODES ...)
