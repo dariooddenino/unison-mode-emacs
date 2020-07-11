@@ -1,28 +1,28 @@
 «x:-- Signatures foo : Nat
-»foo = «:highlight-numbers-number:3»
+»«f:foo» = «:highlight-numbers-number:3»
 
-bar = «:highlight-numbers-number:2»
+«f:bar» = «:highlight-numbers-number:2»
 
 «k:ability» «v:Stream» e «k:where»
   «f:emit» «k::» e «k:->» ()
 
 «f:function1'» «k::» «t:Nat» «k:->» «t:Nat»
-function1' x = x
+«f:function1'» x = x
 
 «f:Foo.function1» «k::» «t:Nat» «k:->» «t:Nat» «k:->» «t:Nat»
-«t:Foo».function1 x x = x
+«f:Foo.function1» x x = x
 
 «f:Bar.Foo.function1» «k::» a «k:->» a
-«t:Bar».«t:Foo».function1 x = x
+«f:Bar.Foo.function1» x = x
 
 «f:function2» «k::» «k:'»«t:Nat»
-function2 «t:_» = «:highlight-numbers-number:3»
+«f:function2» «t:_» = «:highlight-numbers-number:3»
 
 «f:function3» «k::» «k:'»{«v:IO», «v:Stream» e, g} ()
-function3 «t:_» = «k:!»(«t:_» «k:->» ())
+«f:function3» «t:_» = «k:!»(«t:_» «k:->» ())
 
 «f:function4» «k::» () «k:->» ()
-function4 «t:_» = ()
+«f:function4» «t:_» = ()
 
 «k:namespace» «c:Foo.Bar» «k:where»
 
@@ -33,13 +33,13 @@ function4 «t:_» = ()
     «f:emito» «k::» e «k:->» ()
 
   «f:function2» «k::» «t:Nat»  «k:->» «t:Nat»
-  function2 x = x
+  «f:function2» x = x
 
   «f:function3» «k::» a «k:->» a
-  function3 x = x
+  «f:function3» x = x
 
   «f:function4» «k::» «k:'»a «k:->» «t:Nat»
-  function4 «t:_» = «:highlight-numbers-number:3»
+  «f:function4» «t:_» = «:highlight-numbers-number:3»
 
 «k:type» «t:Optional» a = «t:None» | «t:Some» a
 
@@ -48,37 +48,37 @@ function4 «t:_» = ()
 «k:use» «c:Bar»
 
 «f:Stream.sum» «k::» «k:'»{«v:Stream» «t:Nat»} () «k:->» «t:Nat»
-«t:Stream».sum ns =
+«f:Stream.sum» ns =
   «f:h» «k::» «t:Nat» «k:->» «p:Request» {«v:Stream» «t:Nat»} () «k:->» «t:Nat»
-  h acc = «k:cases»
+  «f:h» acc = «k:cases»
     {«v:_»} «k:->» acc
     {«v:Stream».emit n «k:->» resume} «k:->»
       «k:handle» resume () «k:with» h (acc + n)
   «k:handle» «k:!»ns «k:with» h «:highlight-numbers-number:0»
 
 «f:Stream.foldLeft» «k::» (b «k:->» a «k:->» b) «k:->» b «k:->» «k:'»{«v:Stream» a} () «k:->» b
-«t:Stream».foldLeft f b s =
-  h acc = «k:cases»
+«f:Stream.foldLeft» f b s =
+  «f:h» acc = «k:cases»
     {«v:_»} «k:->» acc
     {«v:Stream».emit a «k:->» resume} «k:->»
       «k:handle» resume () «k:with» h (f acc a)
   «k:handle» «k:!»s «k:with» h b
 
 «f:Stream.terminated» «k::» «k:'»{«v:Stream» a} () «k:->» «k:'»{«v:Stream» («t:Optional» a)} ()
-«t:Stream».terminated s «t:_» =
+«f:Stream.terminated» s «t:_» =
   «f:h» «k::» «p:Request» {«v:Stream» a} () «k:->»{«v:Stream» («t:Optional» a)} ()
-  h = «k:cases»
+  «f:h» = «k:cases»
     {«v:_»} «k:->» emit «t:None»
     {«v:Stream».emit a «k:->» resume} «k:->»
       emit («t:Some» a)
       «k:handle» resume () «k:with» h
   «k:handle» «k:!»s «k:with» h
 
-«t:Stream».sum' = «t:Stream».foldLeft («t:Nat».+) «:highlight-numbers-number:0»
+«f:Stream.sum'» = «t:Stream».foldLeft («t:Nat».+) «:highlight-numbers-number:0»
 
 «f:Stream.pipe» «k::» «k:'»{«v:Stream» a} () «k:->» «k:'»{«v:Ask» a, «v:Stream» b} r «k:->» «k:'»{«v:Stream» b} ()
-«t:Stream».pipe s f «t:_» =
-  h s = «k:cases»
+«f:Stream.pipe» s f «t:_» =
+  «f:h» s = «k:cases»
     {«v:_»} «k:->» ()
     {«v:Ask».ask «k:->» resumeF} «k:->»
       «k:handle» «k:!»s «k:with» «k:cases»
@@ -90,14 +90,14 @@ function4 «t:_» = ()
       «k:handle» resumeF () «k:with» h s
   «k:handle» «k:!»f «k:with» h s
 
-«t:Stream».filter f s =
-  go «t:_» =
-    a = ask
+«f:Stream.filter» f s =
+  «f:go» «t:_» =
+    «f:a» = ask
     «k:if» f a «k:then» emit a
     «k:else» «k:!»go
   «t:Stream».pipe s go
 
-«t:Stream».filter.doc = «x:[:
+«f:Stream.filter.doc» = «x:[:
 Multiline
 
 documentation

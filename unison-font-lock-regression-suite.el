@@ -3,7 +3,7 @@
 ;; Copyright © 2020, Dario Oddenino
 
 ;; Author: Dario Oddenino
-;; Version: 0.1.0
+;; Version: 0.2.0
 ;; Created: 24 Apr 2020
 ;; Keywords: languages
 

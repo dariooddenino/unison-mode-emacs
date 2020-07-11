@@ -64,8 +64,9 @@
              (x-single-quote-exc-regexp "\\(\s\\)\\(!\\|'\\)")
 
              ;; Signautres
+             (x-sig-regexp (concat "^\s*?\\(" namespaced-regexp "\\).+?[:=]"))
              ;; TODO: This one is slowish, but we can lvie with it.
-             (x-sig-regexp (concat "\\(" namespaced-regexp "\\)\s+:"))
+             ;;(x-sig-regexp (concat "\\(" namespaced-regexp "\\)\s+:"))
              ;; TODO: This one is VERY slow. Probably not worth enabling without SERIOUS optimization.
              ;; (x-int-regexp (concat "\\(?:\s\\)*\\(" namespaced-regexp "\\).*="))
 
