@@ -1,4 +1,4 @@
-;;; unison-mode.el --- Simple major mode for editing Unison -*- coding: utf-8; lexical-binding: t; -*-
+;;; unisonlang-mode.el --- Simple major mode for editing Unison -*- coding: utf-8; lexical-binding: t; -*-
 
 ;; Copyright © 2020, Dario Oddenino
 
@@ -7,7 +7,7 @@
 ;; Package-Requires: ((emacs "25.1"))
 ;; Created: 24 Apr 2020
 ;; Keywords: languages
-;; URL: https://github.com/unison-mode
+;; URL: https://github.com/unison-mode-emacs
 
 ;; This file is not part of GNU Emacs.
 
@@ -21,7 +21,7 @@
 
 ;;; Code:
 
-(defconst unison-mode-syntax-table
+(defconst unisonlang-mode-syntax-table
   (let ((table (make-syntax-table)))
     ;; -- Are comments
     (modify-syntax-entry ?- ". 12" table)
@@ -33,8 +33,8 @@
     (modify-syntax-entry ?\] ". 4" table)
     table))
 
-(defvar unison-font-lock-keywords)
-(setq unison-font-lock-keywords
+(defvar unisonlang-font-lock-keywords)
+(setq unisonlang-font-lock-keywords
       (let* (
              ;; Regex for identifiers
 
@@ -99,7 +99,7 @@
           (,x-type-regexp . (1 font-lock-type-face))
           (,x-esc-regexp . font-lock-negation-char-face))))
 
-(defun unison-mode-add-fold ()
+(defun unisonlang-mode-add-fold ()
   "Add a fold above the current line."
   (interactive)
   (newline)
@@ -109,7 +109,7 @@
     (forward-line -2)
     (insert "---")))
 
-(defun unison-delete-line ()
+(defun unisonlang-delete-line ()
   "Delete the current line if empty."
   (let (start end content)
     (setq start (line-beginning-position))
@@ -121,23 +121,23 @@
         (delete-region start (+ 1 end))
         (forward-line 1)))))
 
-(defun unison-mode-remove-fold ()
+(defun unisonlang-mode-remove-fold ()
   "Remove the fold directly above the current line."
   (interactive)
   (progn
      (goto-char (search-backward "---"))
      (forward-line -1)
-     (unison-delete-line)
-     (unison-delete-line)
-     (unison-delete-line)))
+     (unisonlang-delete-line)
+     (unisonlang-delete-line)
+     (unisonlang-delete-line)))
 
-(defvar unison-mode-map nil "Keymap for `unison-mode'.")
+(defvar unisonlang-mode-map nil "Keymap for `unisonlang-mode'.")
 (progn
-  (setq unison-mode-map (make-sparse-keymap))
-  (define-key unison-mode-map (kbd "C-c C-f") 'unison-mode-add-fold)
-  (define-key unison-mode-map (kbd "C-c C-d") 'unison-mode-remove-fold))
+  (setq unisonlang-mode-map (make-sparse-keymap))
+  (define-key unisonlang-mode-map (kbd "C-c C-f") 'unisonlang-mode-add-fold)
+  (define-key unisonlang-mode-map (kbd "C-c C-d") 'unisonlang-mode-remove-fold))
 
-(defun unison-font-lock-extend-region ()
+(defun unisonlang-font-lock-extend-region ()
   "Extend the search region to include an entire block of text."
   ;; Avoid compiler warnings about these global variables from font-lock.el.
   ;; See the documentation for variable `font-lock-extend-region-functions'.
@@ -152,23 +152,23 @@
       (setq font-lock-beg found))))
 
 ;;;###autoload
-(define-derived-mode unison-mode prog-mode "unison-mode"
+(define-derived-mode unisonlang-mode prog-mode "unisonlang-mode"
   "Major mode for editing Unison"
 
-  :syntax-table unison-mode-syntax-table
+  :syntax-table unisonlang-mode-syntax-table
 
-  (setq font-lock-defaults '(unison-font-lock-keywords))
+  (setq font-lock-defaults '(unisonlang-font-lock-keywords))
   (setq font-lock-multiline t)
-  (add-hook 'font-lock-extend-region-functions 'unison-font-lock-extend-region)
+  (add-hook 'font-lock-extend-region-functions 'unisonlang-font-lock-extend-region)
   (font-lock-ensure)
 
   (setq-local comment-start "--  ")
   (setq-local comment-end ""))
 
 ;;;###autoload
-(add-to-list 'auto-mode-alist '("\\.u\\'" . unison-mode))
+(add-to-list 'auto-mode-alist '("\\.u\\'" . unisonlang-mode))
 
 ;; add the mode
-(provide 'unison-mode)
+(provide 'unisonlang-mode)
 
-;;; unison-mode.el ends here
+;;; unisonlang-mode.el ends here

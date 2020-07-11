@@ -230,4 +230,4 @@ When C-u prefix, or when FORCE is non-nil, only regenerate missing files."
 ;;
 
 
-;;; unison-font-lock-regression-suite.el ends here
+;;; unison-font-lock-regression-tests.el ends here
