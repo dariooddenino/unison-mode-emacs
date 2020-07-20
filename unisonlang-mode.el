@@ -140,11 +140,12 @@
      (unisonlang-delete-line)
      (unisonlang-delete-line)))
 
-(defvar unisonlang-mode-map nil "Keymap for `unisonlang-mode'.")
-(progn
-  (setq unisonlang-mode-map (make-sparse-keymap))
-  (define-key unisonlang-mode-map (kbd "C-c C-f") #'unisonlang-mode-add-fold)
-  (define-key unisonlang-mode-map (kbd "C-c C-d") #'unisonlang-mode-remove-fold))
+(defvar unisonlang-mode-map
+  (let ((km (make-sparse-keymap)))
+   (define-key km (kbd "C-c C-f") #'unisonlang-mode-add-fold)
+   (define-key km (kbd "C-c C-d") #'unisonlang-mode-remove-fold)
+   km)
+  "Keymap for `unisonlang-mode'.")
 
 (defun unisonlang-font-lock-extend-region ()
   "Extend the search region to include an entire block of text."
