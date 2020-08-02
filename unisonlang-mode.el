@@ -7,7 +7,7 @@
 ;; Package-Requires: ((emacs "25.1"))
 ;; Created: 24 Apr 2020
 ;; Keywords: languages
-;; URL: https://github.com/unison-mode-emacs
+;; URL: https://github.com/dariooddenino/unison-mode-emacs
 
 ;; This file is not part of GNU Emacs.
 
