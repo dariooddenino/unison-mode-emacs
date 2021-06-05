@@ -178,6 +178,28 @@
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.u\\'" . unisonlang-mode))
 
+;; Ucm wrapper
+(require 'comint)
+(require 'rx)
+
+(defvar ucm-process-name "ucm" "Default ucm executable.")
+(defvar ucm-buffer-name "ucm" "Default ucm buffer.")
+;;;###autoload
+(define-derived-mode inferior-ucm-mode comint-mode "Inferior Unison Code Manager"
+  "Major mode for the inferior ucm process."
+  (setq-local indent-tabs-mode nil)
+  (setq-local comint-prompt-read-only t)
+  (setq-local comint-prompt-regexp (rx "." (* (| alphanumeric "/")) ">" space))
+  )
+
+;;;###autoload
+(defun run-ucm ()
+  "Run an inferior ucm process."
+  (interactive)
+  (let ((buffer (make-comint-in-buffer ucm-buffer-name nil ucm-process-name)))
+    (with-current-buffer buffer
+      (inferior-ucm-mode))
+    (display-buffer buffer)))
 ;; add the mode
 (provide 'unisonlang-mode)
 
